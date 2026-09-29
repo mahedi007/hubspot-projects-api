@@ -1,0 +1,49 @@
+{
+  "info": {
+    "name": "HubSpot Projects API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "projectRecordId", "value": "" },
+    { "key": "contactId", "value": "" },
+    { "key": "companyId", "value": "" }
+  ],
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } },
+    {
+      "name": "Create project",
+      "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('projectRecordId', pm.response.json().id);"] } }],
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/projects",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"projectName\": \"Website Redesign\",\n  \"projectId\": \"PRJ-1001\",\n  \"status\": \"In Progress\",\n  \"startDate\": \"2026-10-01\",\n  \"endDate\": \"2026-12-15\",\n  \"projectValue\": 12500,\n  \"contactId\": \"{{contactId}}\",\n  \"companyId\": \"{{companyId}}\"\n}" }
+      }
+    },
+    { "name": "List projects", "request": { "method": "GET", "url": "{{baseUrl}}/api/projects?limit=20" } },
+    { "name": "List projects by status", "request": { "method": "GET", "url": "{{baseUrl}}/api/projects?status=completed" } },
+    { "name": "Get project", "request": { "method": "GET", "url": "{{baseUrl}}/api/projects/{{projectRecordId}}" } },
+    { "name": "Get project by Project ID", "request": { "method": "GET", "url": "{{baseUrl}}/api/projects/PRJ-1001?idProperty=project_id" } },
+    {
+      "name": "Update project",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/projects/{{projectRecordId}}",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"projectValue\": 15000,\n  \"endDate\": \"2026-12-31\"\n}" }
+      }
+    },
+    {
+      "name": "Mark project Completed (triggers automation)",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/api/projects/{{projectRecordId}}",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"status\": \"Completed\"\n}" }
+      }
+    },
+    { "name": "Associate contact", "request": { "method": "PUT", "url": "{{baseUrl}}/api/projects/{{projectRecordId}}/associations/contacts/{{contactId}}" } },
+    { "name": "Associate company", "request": { "method": "PUT", "url": "{{baseUrl}}/api/projects/{{projectRecordId}}/associations/companies/{{companyId}}" } }
+  ]
+}
